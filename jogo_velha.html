@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+<head>
+    <title>Jogo da Velha</title>
+    <style>
+        td {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 24px;
+            cursor: pointer;
+			border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jogo da Velha</h1>
+    <table>
+        <tr>
+            <td id="cell00"></td>
+            <td id="cell01"></td>
+            <td id="cell02"></td>
+        </tr>
+        <tr>
+            <td id="cell10"></td>
+            <td id="cell11"></td>
+            <td id="cell12"></td>
+        </tr>
+        <tr>
+            <td id="cell20"></td>
+            <td id="cell21"></td>
+            <td id="cell22"></td>
+        </tr>
+    </table>
+
+    <script>
+	
+        let currentPlayer = 'X';
+        let board = [
+            ['', '', ''],
+            ['', '', ''],
+            ['', '', '']
+        ];
+
+        const cells = document.querySelectorAll('td');
+
+        cells.forEach(cell => {
+            cell.addEventListener('click', () => {
+                if (cell.textContent === '' && currentPlayer === 'X') {
+                    cell.textContent = currentPlayer;
+                    const row = parseInt(cell.id.charAt(4));
+                    const col = parseInt(cell.id.charAt(5));
+                    board[row][col] = 'X';
+                    currentPlayer = 'O';
+                    makeMove();
+                    checkWinner();
+                }
+            });
+        });
+
+        function makeMove() {
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (board[i][j] === '') {
+                        board[i][j] = 'O';
+                        document.getElementById(`cell${i}${j}`).textContent = 'O';
+                        currentPlayer = 'X';
+                        return;
+                    }
+                }
+            }
+        }
+
+        function checkWinner() {			
+					// Verifica linhas
+					for (let i = 0; i < 3; i++) {
+						if (board[i][0] === board[i][1] && board[i][1] === board[i][2] && board[i][0] !== '') {
+							announceWinner(board[i][0]);
+							return;
+						}
+					}
+
+					// Verifica colunas
+					for (let j = 0; j < 3; j++) {
+						if (board[0][j] === board[1][j] && board[1][j] === board[2][j] && board[0][j] !== '') {
+							announceWinner(board[0][j]);
+							return;
+						}
+					}
+
+					// Verifica diagonais
+					if ((board[0][0] === board[1][1] && board[1][1] === board[2][2]) ||
+						(board[0][2] === board[1][1] && board[1][1] === board[2][0])) {
+						if (board[1][1] !== '') {
+							announceWinner(board[1][1]);
+							return;
+						}
+					}
+
+					// Verifica empate
+					let isFull = true;
+					for (let i = 0; i < 3; i++) {
+						for (let j = 0; j < 3; j++) {
+							if (board[i][j] === '') {
+								isFull = false;
+								break;
+							}
+						}
+					}
+
+					if (isFull) {
+						announceDraw();
+					}
+				}
+
+				function announceWinner(winner) {
+					alert(`Jogador ${winner} venceu!`);
+					resetGame();
+				}
+
+				function announceDraw() {
+					alert('Empate!');
+					resetGame();
+				}
+
+				function resetGame() {
+					board = [
+						['', '', ''],
+						['', '', ''],
+						['', '', '']
+					];
+
+					currentPlayer = 'X';
+
+					cells.forEach(cell => {
+						cell.textContent = '';
+					});
+				}
+        
+    </script>
+</body>
+</html>
